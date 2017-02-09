@@ -1,23 +1,20 @@
-#include <iostream>
-#include <sstream>
-#include <vector>
-#include <string>
-
 #include "h/misc.hpp"
+#include "h/Processor.hpp"
 
 int main(void)
-{   
+{
+    Processor proc;
     std::string str;
-    std::getline(std::cin, str);
 
-    std::vector<std::string> strVec = split(str, ' ', true);
-
-    std::cout << strVec.size() << std::endl;
-    while(!strVec.empty())
+    while (true)
     {
-        std::cout << strVec.back() << std::endl;
-        strVec.pop_back();
+        std::getline(std::cin, str);
+
+        if (str == "EXIT")
+            return 0;
+        else
+            proc.Execute(split(str, ' '));
     }
 
-    return 0;
+    return -1;
 }
