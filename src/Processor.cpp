@@ -1,8 +1,8 @@
 #include "h/Processor.hpp"
-#include <sstream>
 
 Processor::Processor()
 {
+    clearFlags();
 }
 
 bool Processor::Execute(const std::vector<std::string> &command)
@@ -11,16 +11,22 @@ bool Processor::Execute(const std::vector<std::string> &command)
         return false;
 
     // Custom instructions
-    if (command[0] == "DUMP" && command.size() == 2)
-        return instrDUMP(command[1]);
+    if (command[0] == "DUMP" && command.size() == 2) return instrDUMP(command[1]);
 
     // x86 instrunctions
-    if (command[0] == "MOV" && command.size() == 3)
-        return instrMOV(command[1], command[2]);
+    if (command[0] == "MOV" && command.size() == 3) return instrMOV(command[1], command[2]);
+    if (command[0] == "INC" && command.size() == 2) return instrINC(command[1]);
+    if (command[0] == "DEC" && command.size() == 2) return instrDEC(command[1]);
+    if (command[0] == "ADD" && command.size() == 3) return instrADD(command[1], command[2]);
+    if (command[0] == "ADC" && command.size() == 2) return instrADC(command[1]);
+    if (command[0] == "ADC" && command.size() == 3) return instrADC(command[1], command[2]);
+    if (command[0] == "SUB" && command.size() == 3) return instrSUB(command[1], command[2]);
+    if (command[0] == "SBB" && command.size() == 2) return instrSBB(command[1]);
+    if (command[0] == "SBB" && command.size() == 3) return instrSBB(command[1], command[2]);
 
     // Unrecognized instruction
     std::cout << "Invalid instruction! (";
-    for (int i = 0; i < command.size(); i++)
+    for (int i = 0; i < (int)command.size(); i++)
     {
         if (i > 0)
             std::cout << " ";
@@ -30,6 +36,16 @@ bool Processor::Execute(const std::vector<std::string> &command)
     std::cout << ")" << std::endl;
 
     return false;
+}
+
+void Processor::errInvalidRegister(const std::string &strReg)
+{
+    std::cout << "Ivalid register! (" << strReg << ")" << std::endl;
+}
+
+void Processor::errInvalidOperand(const std::string &strOperand)
+{
+    std::cout << "Ivalid operand! (" << strOperand << ")" << std::endl;
 }
 
 int Processor::getRegIndex(const std::string &strReg)
@@ -59,6 +75,12 @@ bool Processor::getRegLong(const std::string &strReg, unsigned long *&pReg)
     return (regIndex >= 0);
 }
 
+void Processor::clearFlags()
+{
+    flagCarry = false;
+    flagBorrow = false;
+}
+
 bool Processor::instrDUMP(const std::string &strReg)
 {
     if (strReg[0] == 'I')
@@ -78,6 +100,24 @@ bool Processor::instrDUMP(const std::string &strReg)
             std::cout << *pReg << std::endl;
             return true;
         }
+    }
+    else if (strReg[0] == 'C')
+    {
+        if (flagCarry)
+            std::cout << "CARRY TRUE" << std::endl;
+        else
+            std::cout << "CARRY FALSE" << std::endl;
+
+        return true;
+    }
+    else if (strReg[0] == 'B')
+    {
+        if (flagBorrow)
+            std::cout << "BORROW TRUE" << std::endl;
+        else
+            std::cout << "BORROW FALSE" << std::endl;
+
+        return true;
     }
 
     errInvalidRegister(strReg);
@@ -121,13 +161,16 @@ bool Processor::instrMOV(const std::string &strDest, const std::string &strSourc
             // Source is a literal value
             else
             {
-                std::istringstream iss(strSource);
-                int sourceValue = 0;
+                /*std::istringstream iss(strSource);
+                unsigned int sourceValue = 0;
                 if (iss >> sourceValue)
                 {
-                    *pRegDest = sourceValue;
+                    *pRegDest = (signed int)sourceValue;
                     return true;
-                }
+                }*/
+
+                if (strSIntTryParse(strSource, *pRegDest))
+                    return true;
             }
 
             errInvalidOperand(strSource);
@@ -169,11 +212,253 @@ bool Processor::instrMOV(const std::string &strDest, const std::string &strSourc
             // Source is a literal value
             else
             {
-                std::istringstream iss(strSource);
-                int sourceValue = 0;
+                /*std::istringstream iss(strSource);
+                signed int sourceValue = 0;
                 if (iss >> sourceValue)
                 {
                     *pRegDest = (unsigned long)sourceValue;
+                    return true;
+                }*/
+
+                if (strULongTryParse(strSource, *pRegDest))
+                    return true;
+            }
+
+            errInvalidOperand(strSource);
+            return false;
+        }
+    }
+
+    errInvalidRegister(strDest);
+    return false;
+}
+
+bool Processor::instrINC(const std::string &strDest)
+{
+    if (strDest[0] == 'I')
+    {
+        signed int *pReg = nullptr;
+        if (getRegInt(strDest, pReg))
+        {
+            signed int oldValue = *pReg;
+            *pReg += 1;
+            flagCarry = (*pReg < oldValue);
+            return true;
+        }
+    }
+    else if (strDest[0] == 'L')
+    {
+        unsigned long *pReg = nullptr;
+        if (getRegLong(strDest, pReg))
+        {
+            unsigned long oldValue = *pReg;
+            *pReg += 1;
+            flagCarry = (*pReg < oldValue);
+            return true;
+        }
+    }
+
+    errInvalidRegister(strDest);
+    return false;
+}
+
+bool Processor::instrDEC(const std::string &strDest)
+{
+    if (strDest[0] == 'I')
+    {
+        signed int *pReg = nullptr;
+        if (getRegInt(strDest, pReg))
+        {
+            signed int oldValue = *pReg;
+            *pReg -= 1;
+            flagBorrow = (*pReg > oldValue);
+            return true;
+        }
+    }
+    else if (strDest[0] == 'L')
+    {
+        unsigned long *pReg = nullptr;
+        if (getRegLong(strDest, pReg))
+        {
+            unsigned long oldValue = *pReg;
+            *pReg -= 1;
+            flagBorrow = (*pReg > oldValue);
+            return true;
+        }
+    }
+
+    errInvalidRegister(strDest);
+    return false;
+}
+
+bool Processor::instrADD(const std::string &strDest, const std::string &strSource)
+{
+    // Destination register is int
+    if (strDest[0] == 'I')
+    {
+        signed int *pRegDest = nullptr;
+        if (getRegInt(strDest, pRegDest))
+        {
+            // Source register is int
+            if (strSource[0] == 'I')
+            {
+                signed int *pRegSource = nullptr;
+                if (getRegInt(strSource, pRegSource))
+                {
+                    signed int oldValue = *pRegDest;
+                    *pRegDest += *pRegSource;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+                    else
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source register is long
+            else if (strSource[0] == 'L')
+            {
+                unsigned long *pRegSource = nullptr;
+                if (getRegLong(strSource, pRegSource))
+                {
+                    signed int oldValue = *pRegDest;
+                    *pRegDest += (signed int)*pRegSource;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+                    else
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source is a literal value
+            else
+            {
+                std::istringstream iss(strSource);
+                signed int sourceValue = 0;
+                if (iss >> sourceValue)
+                {
+                    signed int oldValue = *pRegDest;
+                    *pRegDest += sourceValue;
+
+                    if (sourceValue >= 0)
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+                    else
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+
+                    return true;
+                }
+            }
+
+            errInvalidOperand(strSource);
+            return false;
+        }
+    }
+    // Destination register is long
+    else if (strDest[0] == 'L')
+    {
+        unsigned long *pRegDest = nullptr;
+        if (getRegLong(strDest, pRegDest))
+        {
+            // Source register is int
+            if (strSource[0] == 'I')
+            {
+                signed int *pRegSource = nullptr;
+                if (getRegInt(strSource, pRegSource))
+                {
+                    unsigned long oldValue = *pRegDest;
+                    *pRegDest += (unsigned long)*pRegSource;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+                    else
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source register is long
+            else if (strSource[0] == 'L')
+            {
+                unsigned long *pRegSource = nullptr;
+                if (getRegLong(strSource, pRegSource))
+                {
+                    unsigned long oldValue = *pRegDest;
+                    *pRegDest += *pRegSource;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+                    else
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source is a literal value
+            else
+            {
+                std::istringstream iss(strSource);
+                unsigned long sourceValue = 0;
+                if (iss >> sourceValue)
+                {
+                    unsigned long oldValue = *pRegDest;
+                    *pRegDest += sourceValue;
+
+                    if (sourceValue >= 0)
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+                    else
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+
                     return true;
                 }
             }
@@ -187,12 +472,631 @@ bool Processor::instrMOV(const std::string &strDest, const std::string &strSourc
     return false;
 }
 
-void Processor::errInvalidRegister(const std::string &strReg)
+bool Processor::instrADC(const std::string &strDest)
 {
-    std::cout << "Ivalid register! (" << strReg << ")" << std::endl;
+    if (strDest[0] == 'I')
+    {
+        signed int *pReg = nullptr;
+        if (getRegInt(strDest, pReg))
+        {
+            signed int oldValue = *pReg;
+            if (flagCarry)
+                *pReg += 1;
+            flagCarry = (*pReg < oldValue);
+            return true;
+        }
+    }
+    else if (strDest[0] == 'L')
+    {
+        unsigned long *pReg = nullptr;
+        if (getRegLong(strDest, pReg))
+        {
+            unsigned long oldValue = *pReg;
+            if (flagCarry)
+                *pReg += 1;
+            flagCarry = (*pReg < oldValue);
+            return true;
+        }
+    }
+
+    errInvalidRegister(strDest);
+    return false;
 }
 
-void Processor::errInvalidOperand(const std::string &strOperand)
+bool Processor::instrADC(const std::string &strDest, const std::string &strSource)
 {
-    std::cout << "Ivalid operand! (" << strOperand << ")" << std::endl;
+    // Destination register is int
+    if (strDest[0] == 'I')
+    {
+        signed int *pRegDest = nullptr;
+        if (getRegInt(strDest, pRegDest))
+        {
+            // Source register is int
+            if (strSource[0] == 'I')
+            {
+                signed int *pRegSource = nullptr;
+                if (getRegInt(strSource, pRegSource))
+                {
+                    signed int oldValue = *pRegDest;
+                    *pRegDest += *pRegSource;
+                    if (flagCarry)
+                        *pRegDest += 1;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+                    else
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source register is long
+            else if (strSource[0] == 'L')
+            {
+                unsigned long *pRegSource = nullptr;
+                if (getRegLong(strSource, pRegSource))
+                {
+                    signed int oldValue = *pRegDest;
+                    *pRegDest += (signed int)*pRegSource;
+                    if (flagCarry)
+                        *pRegDest += 1;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+                    else
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source is a literal value
+            else
+            {
+                std::istringstream iss(strSource);
+                signed int sourceValue = 0;
+                if (iss >> sourceValue)
+                {
+                    signed int oldValue = *pRegDest;
+                    *pRegDest += sourceValue;
+                    if (flagCarry)
+                        *pRegDest += 1;
+
+                    if (sourceValue >= 0)
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+                    else
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+
+                    return true;
+                }
+            }
+
+            errInvalidOperand(strSource);
+            return false;
+        }
+    }
+    // Destination register is long
+    else if (strDest[0] == 'L')
+    {
+        unsigned long *pRegDest = nullptr;
+        if (getRegLong(strDest, pRegDest))
+        {
+            // Source register is int
+            if (strSource[0] == 'I')
+            {
+                signed int *pRegSource = nullptr;
+                if (getRegInt(strSource, pRegSource))
+                {
+                    unsigned long oldValue = *pRegDest;
+                    *pRegDest += (unsigned long)*pRegSource;
+                    if (flagCarry)
+                        *pRegDest += 1;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+                    else
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source register is long
+            else if (strSource[0] == 'L')
+            {
+                unsigned long *pRegSource = nullptr;
+                if (getRegLong(strSource, pRegSource))
+                {
+                    unsigned long oldValue = *pRegDest;
+                    *pRegDest += *pRegSource;
+                    if (flagCarry)
+                        *pRegDest += 1;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+                    else
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source is a literal value
+            else
+            {
+                std::istringstream iss(strSource);
+                unsigned long sourceValue = 0;
+                if (iss >> sourceValue)
+                {
+                    unsigned long oldValue = *pRegDest;
+                    *pRegDest += sourceValue;
+                    if (flagCarry)
+                        *pRegDest += 1;
+
+                    if (sourceValue >= 0)
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+                    else
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+
+                    return true;
+                }
+            }
+
+            errInvalidOperand(strSource);
+            return false;
+        }
+    }
+
+    errInvalidRegister(strDest);
+    return false;
+}
+
+bool Processor::instrSUB(const std::string &strDest, const std::string &strSource)
+{
+    // Destination register is int
+    if (strDest[0] == 'I')
+    {
+        signed int *pRegDest = nullptr;
+        if (getRegInt(strDest, pRegDest))
+        {
+            // Source register is int
+            if (strSource[0] == 'I')
+            {
+                signed int *pRegSource = nullptr;
+                if (getRegInt(strSource, pRegSource))
+                {
+                    signed int oldValue = *pRegDest;
+                    *pRegDest -= *pRegSource;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+                    else
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source register is long
+            else if (strSource[0] == 'L')
+            {
+                unsigned long *pRegSource = nullptr;
+                if (getRegLong(strSource, pRegSource))
+                {
+                    signed int oldValue = *pRegDest;
+                    *pRegDest -= (signed int)*pRegSource;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+                    else
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source is a literal value
+            else
+            {
+                std::istringstream iss(strSource);
+                signed int sourceValue = 0;
+                if (iss >> sourceValue)
+                {
+                    signed int oldValue = *pRegDest;
+                    *pRegDest -= sourceValue;
+
+                    if (sourceValue >= 0)
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+                    else
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+
+                    return true;
+                }
+            }
+
+            errInvalidOperand(strSource);
+            return false;
+        }
+    }
+    // Destination register is long
+    else if (strDest[0] == 'L')
+    {
+        unsigned long *pRegDest = nullptr;
+        if (getRegLong(strDest, pRegDest))
+        {
+            // Source register is int
+            if (strSource[0] == 'I')
+            {
+                signed int *pRegSource = nullptr;
+                if (getRegInt(strSource, pRegSource))
+                {
+                    unsigned long oldValue = *pRegDest;
+                    *pRegDest -= (unsigned long)*pRegSource;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+                    else
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source register is long
+            else if (strSource[0] == 'L')
+            {
+                unsigned long *pRegSource = nullptr;
+                if (getRegLong(strSource, pRegSource))
+                {
+                    unsigned long oldValue = *pRegDest;
+                    *pRegDest -= *pRegSource;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+                    else
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source is a literal value
+            else
+            {
+                std::istringstream iss(strSource);
+                unsigned long sourceValue = 0;
+                if (iss >> sourceValue)
+                {
+                    unsigned long oldValue = *pRegDest;
+                    *pRegDest -= sourceValue;
+
+                    if (sourceValue >= 0)
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+                    else
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+
+                    return true;
+                }
+            }
+
+            errInvalidOperand(strSource);
+            return false;
+        }
+    }
+
+    errInvalidRegister(strDest);
+    return false;
+}
+
+bool Processor::instrSBB(const std::string &strDest)
+{
+    if (strDest[0] == 'I')
+    {
+        signed int *pReg = nullptr;
+        if (getRegInt(strDest, pReg))
+        {
+            signed int oldValue = *pReg;
+            if (flagBorrow)
+                *pReg -= 1;
+            flagBorrow = (*pReg > oldValue);
+            return true;
+        }
+    }
+    else if (strDest[0] == 'L')
+    {
+        unsigned long *pReg = nullptr;
+        if (getRegLong(strDest, pReg))
+        {
+            unsigned long oldValue = *pReg;
+            if (flagBorrow)
+                *pReg -= 1;
+            flagBorrow = (*pReg > oldValue);
+            return true;
+        }
+    }
+
+    errInvalidRegister(strDest);
+    return false;
+}
+
+bool Processor::instrSBB(const std::string &strDest, const std::string &strSource)
+{
+    // Destination register is int
+    if (strDest[0] == 'I')
+    {
+        signed int *pRegDest = nullptr;
+        if (getRegInt(strDest, pRegDest))
+        {
+            // Source register is int
+            if (strSource[0] == 'I')
+            {
+                signed int *pRegSource = nullptr;
+                if (getRegInt(strSource, pRegSource))
+                {
+                    signed int oldValue = *pRegDest;
+                    *pRegDest -= *pRegSource;
+                    if (flagBorrow)
+                        *pRegDest -= 1;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+                    else
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source register is long
+            else if (strSource[0] == 'L')
+            {
+                unsigned long *pRegSource = nullptr;
+                if (getRegLong(strSource, pRegSource))
+                {
+                    signed int oldValue = *pRegDest;
+                    *pRegDest -= (signed int)*pRegSource;
+                    if (flagBorrow)
+                        *pRegDest -= 1;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+                    else
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source is a literal value
+            else
+            {
+                std::istringstream iss(strSource);
+                signed int sourceValue = 0;
+                if (iss >> sourceValue)
+                {
+                    signed int oldValue = *pRegDest;
+                    *pRegDest -= sourceValue;
+                    if (flagBorrow)
+                        *pRegDest -= 1;
+
+                    if (sourceValue >= 0)
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+                    else
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+
+                    return true;
+                }
+            }
+
+            errInvalidOperand(strSource);
+            return false;
+        }
+    }
+    // Destination register is long
+    else if (strDest[0] == 'L')
+    {
+        unsigned long *pRegDest = nullptr;
+        if (getRegLong(strDest, pRegDest))
+        {
+            // Source register is int
+            if (strSource[0] == 'I')
+            {
+                signed int *pRegSource = nullptr;
+                if (getRegInt(strSource, pRegSource))
+                {
+                    unsigned long oldValue = *pRegDest;
+                    *pRegDest -= (unsigned long)*pRegSource;
+                    if (flagBorrow)
+                        *pRegDest -= 1;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+                    else
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source register is long
+            else if (strSource[0] == 'L')
+            {
+                unsigned long *pRegSource = nullptr;
+                if (getRegLong(strSource, pRegSource))
+                {
+                    unsigned long oldValue = *pRegDest;
+                    *pRegDest -= *pRegSource;
+                    if (flagBorrow)
+                        *pRegDest -= 1;
+
+                    if (*pRegSource >= 0)
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+                    else
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+
+                    return true;
+                }
+
+                errInvalidRegister(strSource);
+                return false;
+            }
+            // Source is a literal value
+            else
+            {
+                std::istringstream iss(strSource);
+                unsigned long sourceValue = 0;
+                if (iss >> sourceValue)
+                {
+                    unsigned long oldValue = *pRegDest;
+                    *pRegDest -= sourceValue;
+                    if (flagBorrow)
+                        *pRegDest -= 1;
+
+                    if (sourceValue >= 0)
+                    {
+                        flagCarry = false;
+                        flagBorrow = (*pRegDest > oldValue);
+                    }
+                    else
+                    {
+                        flagCarry = (*pRegDest < oldValue);
+                        flagBorrow = false;
+                    }
+
+                    return true;
+                }
+            }
+
+            errInvalidOperand(strSource);
+            return false;
+        }
+    }
+
+    errInvalidRegister(strDest);
+    return false;
 }
