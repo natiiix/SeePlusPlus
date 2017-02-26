@@ -2,29 +2,29 @@
 
 bool Processor::instrINC(const std::string &strDest)
 {
-    if (strDest[0] == 'I')
-    {
-        signed int *pReg = nullptr;
-        if (getRegInt(strDest, pReg))
-        {
-            signed int oldValue = *pReg;
-            *pReg += 1;
-            flagCarry = (*pReg < oldValue);
-            return true;
-        }
-    }
-    else if (strDest[0] == 'L')
-    {
-        unsigned long *pReg = nullptr;
-        if (getRegLong(strDest, pReg))
-        {
-            unsigned long oldValue = *pReg;
-            *pReg += 1;
-            flagCarry = (*pReg < oldValue);
-            return true;
-        }
-    }
+	if (strDest[0] == 'I')
+	{
+		signed int *pReg = nullptr;
+		if (getRegInt(strDest, pReg))
+		{
+			signed int oldValue = *pReg;
+			*pReg += 1;
+			m_flagCarry = (*pReg < oldValue);
+			return true;
+		}
+	}
+	else if (strDest[0] == 'L')
+	{
+		unsigned long *pReg = nullptr;
+		if (getRegLong(strDest, pReg))
+		{
+			unsigned long oldValue = *pReg;
+			*pReg += 1;
+			m_flagCarry = (*pReg < oldValue);
+			return true;
+		}
+	}
 
-    errInvalidRegister(strDest);
-    return false;
+	errInvalidRegister(strDest);
+	return false;
 }

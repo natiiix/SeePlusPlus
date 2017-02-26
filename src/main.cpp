@@ -3,18 +3,18 @@
 
 int main(void)
 {
-    Processor proc;
-    std::string str;
+	Processor proc;
+	std::string str;
 
-    while (true)
-    {
-        std::getline(std::cin, str);
+	while (true)
+	{
+		std::getline(std::cin, str);
 
-        if (str == "EXIT")
-            return 0;
-        else
-            proc.Execute(split(str, ' '));
-    }
+		if (strToUpper(str) == "EXIT")
+			return 0;
+		else
+			proc.ExecuteInstruction(split(str, ' '));
+	}
 
-    return -1;
+	return -1;
 }
