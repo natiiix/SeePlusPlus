@@ -12,6 +12,9 @@
 *.vcxproj
 *.vcxproj.filters
 
+# Ignore shell files
+*.sh
+
 # User-specific files (MonoDevelop/Xamarin Studio)
 *.userprefs
 
