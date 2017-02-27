@@ -1,20 +1,17 @@
 #include "h/misc.hpp"
 #include "h/Processor.hpp"
 
-int main(void)
+int main(unsigned argc, char *argv[])
 {
 	Processor proc;
-	std::string str;
 
-	while (true)
+	for (unsigned i = 1; i < argc; i++)
 	{
-		std::getline(std::cin, str);
-
-		if (strToUpper(str) == "EXIT")
-			return 0;
+		if (proc.LoadProgram(argv[i]))
+			proc.ExecuteProgram();
 		else
-			proc.ExecuteInstruction(split(str, ' '));
+			return -1;
 	}
 
-	return -1;
+	return 0;
 }

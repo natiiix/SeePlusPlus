@@ -75,7 +75,7 @@
     <ClCompile>
       <PreprocessorDefinitions>WIN32;_DEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDebugDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
       <Optimization>Disabled</Optimization>
     </ClCompile>
@@ -89,7 +89,7 @@
     <ClCompile>
       <PreprocessorDefinitions>WIN32;NDEBUG;_CONSOLE;%(PreprocessorDefinitions)</PreprocessorDefinitions>
       <RuntimeLibrary>MultiThreadedDLL</RuntimeLibrary>
-      <WarningLevel>Level3</WarningLevel>
+      <WarningLevel>Level4</WarningLevel>
       <DebugInformationFormat>ProgramDatabase</DebugInformationFormat>
     </ClCompile>
     <Link>
@@ -106,10 +106,16 @@
     <ClCompile Include="src\Processor.cpp" />
     <ClCompile Include="src\ProcessorADC.cpp" />
     <ClCompile Include="src\ProcessorADD.cpp" />
+    <ClCompile Include="src\ProcessorCALL.cpp" />
+    <ClCompile Include="src\ProcessorCMP.cpp" />
     <ClCompile Include="src\ProcessorDEC.cpp" />
     <ClCompile Include="src\ProcessorDUMP.cpp" />
     <ClCompile Include="src\ProcessorINC.cpp" />
+    <ClCompile Include="src\ProcessorJMP.cpp" />
+    <ClCompile Include="src\ProcessorJNZ.cpp" />
+    <ClCompile Include="src\ProcessorJZ.cpp" />
     <ClCompile Include="src\ProcessorMOV.cpp" />
+    <ClCompile Include="src\ProcessorRET.cpp" />
     <ClCompile Include="src\ProcessorSBB.cpp" />
     <ClCompile Include="src\ProcessorSUB.cpp" />
   </ItemGroup>

@@ -1,7 +1,7 @@
 #include "h/misc.hpp"
 
 // Splits string by a separator character and returns a vector of partial strings
-std::vector<std::string> split(const std::string &strInput, const char separator, const bool removeEmpty)
+std::vector<std::string> strSplit(const std::string &strInput, const char separator, const bool removeEmpty)
 {
 	std::vector<std::string> strings;
 	std::istringstream strstream(strInput);
@@ -192,4 +192,34 @@ std::string strToUpper(const std::string &strInput)
 	return strUpper;
 }
 
+// Prints a message representing the recently occurred exception
+void errMessage(const std::string &msg)
+{
+	std::cout << "Error occurred: " << msg << std::endl;
+}
 
+// Prints "invalid instruction" error
+void errInvalidInstruction(const std::vector<std::string> &instruction)
+{
+	std::cout << "Invalid instruction: ";
+	for (int i = 0; i < (int)instruction.size(); i++)
+	{
+		if (i > 0)
+			std::cout << " ";
+
+		std::cout << instruction[i];
+	}
+	std::cout << std::endl;
+}
+
+// Prints "invalid register" error
+void errInvalidRegister(const std::string &strReg)
+{
+	std::cout << "Ivalid register: " << strReg << std::endl;
+}
+
+// Prints "invalid operand" error
+void errInvalidOperand(const std::string &strOperand)
+{
+	std::cout << "Ivalid operand: " << strOperand << std::endl;
+}
