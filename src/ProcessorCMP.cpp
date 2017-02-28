@@ -14,7 +14,10 @@ bool Processor::instrCMP(const std::string &strDest, const std::string &strSourc
 				signed int *pRegSource = nullptr;
 				if (getRegInt(strSource, pRegSource))
 				{
-					m_flagZero = (*pRegDest == *pRegSource);
+					m_flagCarry = (*pRegSource > *pRegDest);
+					m_flagBorrow = (*pRegSource < *pRegDest);
+					m_flagZero = (*pRegSource == *pRegDest);
+
 					return true;
 				}
 
@@ -27,7 +30,10 @@ bool Processor::instrCMP(const std::string &strDest, const std::string &strSourc
 				unsigned long *pRegSource = nullptr;
 				if (getRegLong(strSource, pRegSource))
 				{
-					m_flagZero = (*pRegDest == *pRegSource);
+					m_flagCarry = ((signed int)*pRegSource > *pRegDest);
+					m_flagBorrow = ((signed int)*pRegSource < *pRegDest);
+					m_flagZero = ((signed int)*pRegSource == *pRegDest);
+
 					return true;
 				}
 
@@ -41,7 +47,10 @@ bool Processor::instrCMP(const std::string &strDest, const std::string &strSourc
 				signed int sourceValue = 0;
 				if (iss >> sourceValue)
 				{
-					m_flagZero = (*pRegDest == sourceValue);
+					m_flagCarry = (sourceValue > *pRegDest);
+					m_flagBorrow = (sourceValue < *pRegDest);
+					m_flagZero = (sourceValue == *pRegDest);
+
 					return true;
 				}
 			}
@@ -62,7 +71,10 @@ bool Processor::instrCMP(const std::string &strDest, const std::string &strSourc
 				signed int *pRegSource = nullptr;
 				if (getRegInt(strSource, pRegSource))
 				{
-					m_flagZero = (*pRegDest == *pRegSource);
+					m_flagCarry = (*pRegSource > (signed int)*pRegDest);
+					m_flagBorrow = (*pRegSource < (signed int)*pRegDest);
+					m_flagZero = (*pRegSource == (signed int)*pRegDest);
+
 					return true;
 				}
 
@@ -75,7 +87,10 @@ bool Processor::instrCMP(const std::string &strDest, const std::string &strSourc
 				unsigned long *pRegSource = nullptr;
 				if (getRegLong(strSource, pRegSource))
 				{
-					m_flagZero = (*pRegDest == *pRegSource);
+					m_flagCarry = (*pRegSource > *pRegDest);
+					m_flagBorrow = (*pRegSource < *pRegDest);
+					m_flagZero = (*pRegSource == *pRegDest);
+
 					return true;
 				}
 
@@ -89,7 +104,10 @@ bool Processor::instrCMP(const std::string &strDest, const std::string &strSourc
 				unsigned long sourceValue = 0;
 				if (iss >> sourceValue)
 				{
-					m_flagZero = (*pRegDest == sourceValue);
+					m_flagCarry = (sourceValue > *pRegDest);
+					m_flagBorrow = (sourceValue < *pRegDest);
+					m_flagZero = (sourceValue == *pRegDest);
+
 					return true;
 				}
 			}

@@ -48,10 +48,20 @@ private:
 	bool instrSUB(const std::string &strDest, const std::string &strSource); // Subtract
 	bool instrSBB(const std::string &strDest); // Subtract 1 if borrow flag is set
 	bool instrSBB(const std::string &strDest, const std::string &strSource); // Subtract with borrow
-	bool instrCALL(const std::string &strDest); // Call subroutine
-	bool instrRET(void); // Return from subroutine
 	bool instrCMP(const std::string &strDest, const std::string &strSource); // Compare operands
 	bool instrJMP(const std::string &strDest); // Unconditional jump
-	bool instrJZ(const std::string &strDest); // Jump if zero flag is set
-	bool instrJNZ(const std::string &strDest); // Jump if zero flag is not set
+	bool instrJZ(const std::string &strDest); // Jump if source == dest (zero)
+	bool instrJNZ(const std::string &strDest); // Jump if source != dest (!zero)
+	bool instrJG(const std::string &strDest); // Jump if source > dest (carry)
+	bool instrJGE(const std::string &strDest); // Jump if source >= dest (carry || zero)
+	bool instrJL(const std::string &strDest); // Jump if source < dest (borrow)
+	bool instrJLE(const std::string &strDest); // Jump if source <= dest (borrow || zero)
+	bool instrCALL(const std::string &strDest); // Call subroutine
+	bool instrCZ(const std::string &strDest); // Call subroutine if source == dest (zero)
+	bool instrCNZ(const std::string &strDest); // Call subroutine if source != dest (!zero)
+	bool instrCG(const std::string &strDest); // Call subroutine if source > dest (carry)
+	bool instrCGE(const std::string &strDest); // Call subroutine if source >= dest (carry || zero)
+	bool instrCL(const std::string &strDest); // Call subroutine if source < dest (borrow)
+	bool instrCLE(const std::string &strDest); // Call subroutine if source <= dest (borrow || zero)
+	bool instrRET(void); // Return from subroutine
 };
