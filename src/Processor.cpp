@@ -104,6 +104,9 @@ bool Processor::ExecuteInstruction(const std::vector<std::string> &instruction)
 	if (opcode == "CL" && instruction.size() == 2) return instrCL(instruction[1]);
 	if (opcode == "CLE" && instruction.size() == 2) return instrCLE(instruction[1]);
 	if (opcode == "RET" && instruction.size() == 1) return instrRET();
+	if (opcode == "MUL" && instruction.size() == 3) return instrMUL(instruction[1], instruction[2]);
+	if (opcode == "DIV" && instruction.size() == 3) return instrDIV(instruction[1], instruction[2]);
+	if (opcode == "MOD" && instruction.size() == 3) return instrMOD(instruction[1], instruction[2]);
 
 	// Unrecognized instruction
 	errInvalidInstruction(instruction);

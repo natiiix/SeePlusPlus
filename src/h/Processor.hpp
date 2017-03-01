@@ -64,4 +64,7 @@ private:
 	bool instrCL(const std::string &strDest); // Call subroutine if source < dest (borrow)
 	bool instrCLE(const std::string &strDest); // Call subroutine if source <= dest (borrow || zero)
 	bool instrRET(void); // Return from subroutine
+	bool instrMUL(const std::string &strDest, const std::string &strSource); // Multiply
+	bool instrDIV(const std::string &strDest, const std::string &strSource); // Divide
+	bool instrMOD(const std::string &strDest, const std::string &strSource); // Remainder after integer division
 };
