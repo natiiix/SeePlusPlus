@@ -77,9 +77,12 @@ bool Processor::ExecuteInstruction(const std::vector<std::string> &instruction)
 
 	// Custom instructions
 	if (opcode == "DUMP" && instruction.size() == 2) return instrDUMP(instruction[1]);
+	if (opcode == "DUMPB" && instruction.size() == 2) return instrDUMPB(instruction[1]);
+	if (opcode == "DUMPH" && instruction.size() == 2) return instrDUMPH(instruction[1]);
 
 	// x86 instrunctions
 	if (opcode == "MOV" && instruction.size() == 3) return instrMOV(instruction[1], instruction[2]);
+	// Math
 	if (opcode == "INC" && instruction.size() == 2) return instrINC(instruction[1]);
 	if (opcode == "DEC" && instruction.size() == 2) return instrDEC(instruction[1]);
 	if (opcode == "ADD" && instruction.size() == 3) return instrADD(instruction[1], instruction[2]);
@@ -88,7 +91,11 @@ bool Processor::ExecuteInstruction(const std::vector<std::string> &instruction)
 	if (opcode == "SUB" && instruction.size() == 3) return instrSUB(instruction[1], instruction[2]);
 	if (opcode == "SBB" && instruction.size() == 2) return instrSBB(instruction[1]);
 	if (opcode == "SBB" && instruction.size() == 3) return instrSBB(instruction[1], instruction[2]);
+	if (opcode == "MUL" && instruction.size() == 3) return instrMUL(instruction[1], instruction[2]);
+	if (opcode == "DIV" && instruction.size() == 3) return instrDIV(instruction[1], instruction[2]);
+	if (opcode == "MOD" && instruction.size() == 3) return instrMOD(instruction[1], instruction[2]);
 	if (opcode == "CMP" && instruction.size() == 3) return instrCMP(instruction[1], instruction[2]);
+	// Jump
 	if (opcode == "JMP" && instruction.size() == 2) return instrJMP(instruction[1]);
 	if (opcode == "JZ" && instruction.size() == 2) return instrJZ(instruction[1]);
 	if (opcode == "JNZ" && instruction.size() == 2) return instrJNZ(instruction[1]);
@@ -96,17 +103,15 @@ bool Processor::ExecuteInstruction(const std::vector<std::string> &instruction)
 	if (opcode == "JGE" && instruction.size() == 2) return instrJGE(instruction[1]);
 	if (opcode == "JL" && instruction.size() == 2) return instrJL(instruction[1]);
 	if (opcode == "JLE" && instruction.size() == 2) return instrJLE(instruction[1]);
+	// Call
 	if (opcode == "CALL" && instruction.size() == 2) return instrCALL(instruction[1]);
+	if (opcode == "RET" && instruction.size() == 1) return instrRET();
 	if (opcode == "CZ" && instruction.size() == 2) return instrCZ(instruction[1]);
 	if (opcode == "CNZ" && instruction.size() == 2) return instrCNZ(instruction[1]);
 	if (opcode == "CG" && instruction.size() == 2) return instrCG(instruction[1]);
 	if (opcode == "CGE" && instruction.size() == 2) return instrCGE(instruction[1]);
 	if (opcode == "CL" && instruction.size() == 2) return instrCL(instruction[1]);
 	if (opcode == "CLE" && instruction.size() == 2) return instrCLE(instruction[1]);
-	if (opcode == "RET" && instruction.size() == 1) return instrRET();
-	if (opcode == "MUL" && instruction.size() == 3) return instrMUL(instruction[1], instruction[2]);
-	if (opcode == "DIV" && instruction.size() == 3) return instrDIV(instruction[1], instruction[2]);
-	if (opcode == "MOD" && instruction.size() == 3) return instrMOD(instruction[1], instruction[2]);
 
 	// Unrecognized instruction
 	errInvalidInstruction(instruction);

@@ -36,7 +36,10 @@ private:
 	bool getRegLong(const std::string &strReg, unsigned long *&pReg);
 
 	// ---- Custom instructions ----
-	bool instrDUMP(const std::string &strReg); // Prints the register to console
+	bool instrDUMP(const std::string &strReg); // Prints the register in demical
+	bool _instrDUMP_BASE(const std::string &strReg, const unsigned &base); // Prints the register in a specified base
+	bool instrDUMPB(const std::string &strReg); // Prints the register in binary
+	bool instrDUMPH(const std::string &strReg); // Prints the register in hexadecimal
 
 	// ---- x86 instructions ----
 	bool instrMOV(const std::string &strDest, const std::string &strSource); // Move
@@ -63,11 +66,11 @@ private:
 	bool instrJLE(const std::string &strDest); // Jump if source <= dest (borrow || zero)
 	// Call
 	bool instrCALL(const std::string &strDest); // Call subroutine
+	bool instrRET(void); // Return from subroutine
 	bool instrCZ(const std::string &strDest); // Call subroutine if source == dest (zero)
 	bool instrCNZ(const std::string &strDest); // Call subroutine if source != dest (!zero)
 	bool instrCG(const std::string &strDest); // Call subroutine if source > dest (carry)
 	bool instrCGE(const std::string &strDest); // Call subroutine if source >= dest (carry || zero)
 	bool instrCL(const std::string &strDest); // Call subroutine if source < dest (borrow)
 	bool instrCLE(const std::string &strDest); // Call subroutine if source <= dest (borrow || zero)
-	bool instrRET(void); // Return from subroutine
 };

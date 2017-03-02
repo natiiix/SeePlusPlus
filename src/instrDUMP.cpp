@@ -20,6 +20,15 @@ bool Processor::instrDUMP(const std::string &strReg)
 			return true;
 		}
 	}
+	else if (strReg[0] == 'Z')
+	{
+		if (m_flagZero)
+			std::cout << "ZERO TRUE" << std::endl;
+		else
+			std::cout << "ZERO FALSE" << std::endl;
+
+		return true;
+	}
 	else if (strReg[0] == 'C')
 	{
 		if (m_flagCarry)
@@ -41,4 +50,39 @@ bool Processor::instrDUMP(const std::string &strReg)
 
 	errInvalidRegister(strReg);
 	return false;
+}
+
+bool Processor::_instrDUMP_BASE(const std::string &strReg, const unsigned &base)
+{
+	if (strReg[0] == 'I')
+	{
+		signed int *pReg = nullptr;
+		if (getRegInt(strReg, pReg))
+		{
+			std::cout << SIntToString(*pReg, base) << std::endl;
+			return true;
+		}
+	}
+	else if (strReg[0] == 'L')
+	{
+		unsigned long *pReg = nullptr;
+		if (getRegLong(strReg, pReg))
+		{
+			std::cout << ULongToString(*pReg, base) << std::endl;
+			return true;
+		}
+	}
+
+	errInvalidRegister(strReg);
+	return false;
+}
+
+bool Processor::instrDUMPB(const std::string & strReg)
+{
+	return _instrDUMP_BASE(strReg, 2);
+}
+
+bool Processor::instrDUMPH(const std::string & strReg)
+{
+	return _instrDUMP_BASE(strReg, 16);
 }
