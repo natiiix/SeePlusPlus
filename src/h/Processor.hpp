@@ -73,4 +73,9 @@ private:
 	bool instrCGE(const std::string &strDest); // Call subroutine if source >= dest (carry || zero)
 	bool instrCL(const std::string &strDest); // Call subroutine if source < dest (borrow)
 	bool instrCLE(const std::string &strDest); // Call subroutine if source <= dest (borrow || zero)
+	// Logical operations
+	bool instrNOT(const std::string &strDest); // Logical NOT
+	bool instrAND(const std::string &strDest, const std::string &strSource); // Logical AND
+	bool instrOR(const std::string &strDest, const std::string &strSource); // Logical OR
+	bool instrXOR(const std::string &strDest, const std::string &strSource); // Logical XOR
 };
