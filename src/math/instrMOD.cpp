@@ -1,6 +1,6 @@
-#include "h/Processor.hpp"
+#include "../h/Processor.hpp"
 
-bool Processor::instrDIV(const std::string &strDest, const std::string &strSource)
+bool Processor::instrMOD(const std::string &strDest, const std::string &strSource)
 {
 	// Destination register is int
 	if (strDest[0] == 'I')
@@ -15,7 +15,7 @@ bool Processor::instrDIV(const std::string &strDest, const std::string &strSourc
 				if (getRegInt(strSource, pRegSource))
 				{
 					signed int oldValue = *pRegDest;
-					*pRegDest /= *pRegSource;
+					*pRegDest %= *pRegSource;
 
 					return true;
 				}
@@ -30,7 +30,7 @@ bool Processor::instrDIV(const std::string &strDest, const std::string &strSourc
 				if (getRegLong(strSource, pRegSource))
 				{
 					signed int oldValue = *pRegDest;
-					*pRegDest /= (signed int)*pRegSource;
+					*pRegDest %= (signed int)*pRegSource;
 
 					return true;
 				}
@@ -46,7 +46,7 @@ bool Processor::instrDIV(const std::string &strDest, const std::string &strSourc
 				if (iss >> sourceValue)
 				{
 					signed int oldValue = *pRegDest;
-					*pRegDest /= sourceValue;
+					*pRegDest %= sourceValue;
 
 					return true;
 				}
@@ -69,7 +69,7 @@ bool Processor::instrDIV(const std::string &strDest, const std::string &strSourc
 				if (getRegInt(strSource, pRegSource))
 				{
 					unsigned long oldValue = *pRegDest;
-					*pRegDest /= (unsigned long)*pRegSource;
+					*pRegDest %= (unsigned long)*pRegSource;
 
 					return true;
 				}
@@ -84,7 +84,7 @@ bool Processor::instrDIV(const std::string &strDest, const std::string &strSourc
 				if (getRegLong(strSource, pRegSource))
 				{
 					unsigned long oldValue = *pRegDest;
-					*pRegDest /= *pRegSource;
+					*pRegDest %= *pRegSource;
 
 					return true;
 				}
@@ -100,7 +100,7 @@ bool Processor::instrDIV(const std::string &strDest, const std::string &strSourc
 				if (iss >> sourceValue)
 				{
 					unsigned long oldValue = *pRegDest;
-					*pRegDest /= sourceValue;
+					*pRegDest %= sourceValue;
 
 					return true;
 				}

@@ -35,11 +35,12 @@ private:
 	bool getRegInt(const std::string &strReg, signed int *&pReg);
 	bool getRegLong(const std::string &strReg, unsigned long *&pReg);
 
-	// Custom instructions
+	// ---- Custom instructions ----
 	bool instrDUMP(const std::string &strReg); // Prints the register to console
 
-	// x86 instructions
+	// ---- x86 instructions ----
 	bool instrMOV(const std::string &strDest, const std::string &strSource); // Move
+	// Math
 	bool instrINC(const std::string &strDest); // Increment by 1
 	bool instrDEC(const std::string &strDest); // Decrement by 1
 	bool instrADD(const std::string &strDest, const std::string &strSource); // Add
@@ -48,7 +49,11 @@ private:
 	bool instrSUB(const std::string &strDest, const std::string &strSource); // Subtract
 	bool instrSBB(const std::string &strDest); // Subtract 1 if borrow flag is set
 	bool instrSBB(const std::string &strDest, const std::string &strSource); // Subtract with borrow
+	bool instrMUL(const std::string &strDest, const std::string &strSource); // Multiply
+	bool instrDIV(const std::string &strDest, const std::string &strSource); // Divide
+	bool instrMOD(const std::string &strDest, const std::string &strSource); // Remainder after integer division
 	bool instrCMP(const std::string &strDest, const std::string &strSource); // Compare operands
+	// Jump
 	bool instrJMP(const std::string &strDest); // Unconditional jump
 	bool instrJZ(const std::string &strDest); // Jump if source == dest (zero)
 	bool instrJNZ(const std::string &strDest); // Jump if source != dest (!zero)
@@ -56,6 +61,7 @@ private:
 	bool instrJGE(const std::string &strDest); // Jump if source >= dest (carry || zero)
 	bool instrJL(const std::string &strDest); // Jump if source < dest (borrow)
 	bool instrJLE(const std::string &strDest); // Jump if source <= dest (borrow || zero)
+	// Call
 	bool instrCALL(const std::string &strDest); // Call subroutine
 	bool instrCZ(const std::string &strDest); // Call subroutine if source == dest (zero)
 	bool instrCNZ(const std::string &strDest); // Call subroutine if source != dest (!zero)
@@ -64,7 +70,4 @@ private:
 	bool instrCL(const std::string &strDest); // Call subroutine if source < dest (borrow)
 	bool instrCLE(const std::string &strDest); // Call subroutine if source <= dest (borrow || zero)
 	bool instrRET(void); // Return from subroutine
-	bool instrMUL(const std::string &strDest, const std::string &strSource); // Multiply
-	bool instrDIV(const std::string &strDest, const std::string &strSource); // Divide
-	bool instrMOD(const std::string &strDest, const std::string &strSource); // Remainder after integer division
 };

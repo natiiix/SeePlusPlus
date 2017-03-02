@@ -1,6 +1,6 @@
-#include "h/Processor.hpp"
+#include "../h/Processor.hpp"
 
-bool Processor::instrADD(const std::string &strDest, const std::string &strSource)
+bool Processor::instrMUL(const std::string &strDest, const std::string &strSource)
 {
 	// Destination register is int
 	if (strDest[0] == 'I')
@@ -15,18 +15,7 @@ bool Processor::instrADD(const std::string &strDest, const std::string &strSourc
 				if (getRegInt(strSource, pRegSource))
 				{
 					signed int oldValue = *pRegDest;
-					*pRegDest += *pRegSource;
-
-					if (*pRegSource >= 0)
-					{
-						m_flagCarry = (*pRegDest < oldValue);
-						m_flagBorrow = false;
-					}
-					else
-					{
-						m_flagCarry = false;
-						m_flagBorrow = (*pRegDest > oldValue);
-					}
+					*pRegDest *= *pRegSource;
 
 					return true;
 				}
@@ -41,10 +30,7 @@ bool Processor::instrADD(const std::string &strDest, const std::string &strSourc
 				if (getRegLong(strSource, pRegSource))
 				{
 					signed int oldValue = *pRegDest;
-					*pRegDest += (signed int)*pRegSource;
-
-					m_flagCarry = (*pRegDest < oldValue);
-					m_flagBorrow = false;
+					*pRegDest *= (signed int)*pRegSource;
 
 					return true;
 				}
@@ -60,18 +46,7 @@ bool Processor::instrADD(const std::string &strDest, const std::string &strSourc
 				if (iss >> sourceValue)
 				{
 					signed int oldValue = *pRegDest;
-					*pRegDest += sourceValue;
-
-					if (sourceValue >= 0)
-					{
-						m_flagCarry = (*pRegDest < oldValue);
-						m_flagBorrow = false;
-					}
-					else
-					{
-						m_flagCarry = false;
-						m_flagBorrow = (*pRegDest > oldValue);
-					}
+					*pRegDest *= sourceValue;
 
 					return true;
 				}
@@ -94,18 +69,7 @@ bool Processor::instrADD(const std::string &strDest, const std::string &strSourc
 				if (getRegInt(strSource, pRegSource))
 				{
 					unsigned long oldValue = *pRegDest;
-					*pRegDest += (unsigned long)*pRegSource;
-
-					if (*pRegSource >= 0)
-					{
-						m_flagCarry = (*pRegDest < oldValue);
-						m_flagBorrow = false;
-					}
-					else
-					{
-						m_flagCarry = false;
-						m_flagBorrow = (*pRegDest > oldValue);
-					}
+					*pRegDest *= (unsigned long)*pRegSource;
 
 					return true;
 				}
@@ -120,10 +84,7 @@ bool Processor::instrADD(const std::string &strDest, const std::string &strSourc
 				if (getRegLong(strSource, pRegSource))
 				{
 					unsigned long oldValue = *pRegDest;
-					*pRegDest += *pRegSource;
-
-					m_flagCarry = (*pRegDest < oldValue);
-					m_flagBorrow = false;
+					*pRegDest *= *pRegSource;
 
 					return true;
 				}
@@ -139,10 +100,7 @@ bool Processor::instrADD(const std::string &strDest, const std::string &strSourc
 				if (iss >> sourceValue)
 				{
 					unsigned long oldValue = *pRegDest;
-					*pRegDest += sourceValue;
-
-					m_flagCarry = (*pRegDest < oldValue);
-					m_flagBorrow = false;
+					*pRegDest *= sourceValue;
 
 					return true;
 				}
