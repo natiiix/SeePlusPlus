@@ -11,6 +11,9 @@ bool strSIntTryParse(const std::string &strIn, signed int &iOut);
 bool strULongTryParse(const std::string &strIn, unsigned long &uOut);
 std::string strToUpper(const std::string &strInput);
 
+std::string SIntToString(const signed int &input, const unsigned &base);
+std::string ULongToString(const unsigned long &input, const unsigned &base);
+
 void errMessage(const std::string &msg);
 void errInvalidInstruction(const std::vector<std::string> &instruction);
 void errInvalidRegister(const std::string &strReg);

@@ -192,6 +192,119 @@ std::string strToUpper(const std::string &strInput)
 	return strUpper;
 }
 
+// Converts a signed integer to string representation of its value in a specified base
+std::string SIntToString(const signed int &input, const unsigned &base)
+{
+	std::string strOut;
+	bool negative = (input < 0);
+	signed int remainder = (negative ? -input : input);
+	std::vector<signed int> digits;
+
+	// Solve negative number
+	if (negative)
+		strOut.push_back('-');
+
+	switch (base)
+	{
+		// BIN
+	case 2:
+		strOut.push_back('0');
+		strOut.push_back('b');
+		break;
+
+		// DEC
+	case 10:
+		break;
+
+		// HEX
+	case 16:
+		strOut.push_back('0');
+		strOut.push_back('x');
+		break;
+
+		// Invalid base
+	default:
+		return std::string();
+	}
+
+	// Separate digits
+	do
+	{
+		digits.push_back(remainder % base);
+		remainder /= base;
+	} while (remainder > 0);
+
+	// Write digits into the output string as characters
+	while (digits.size() > 0)
+	{
+		char cDigit = digits.back();
+
+		if (cDigit >= 0 && cDigit <= 9)
+			cDigit += '0';
+		else if (cDigit >= 10 && cDigit <= 15)
+			cDigit += 'A' - 10;
+
+		strOut.push_back(cDigit);
+		digits.pop_back();
+	}
+
+	return strOut;
+}
+
+// Converts an unsigned long to string representation of its value in a specified base
+std::string ULongToString(const unsigned long &input, const unsigned &base)
+{
+	std::string strOut;
+	unsigned long remainder = input;
+	std::vector<unsigned long> digits;
+
+	switch (base)
+	{
+		// BIN
+	case 2:
+		strOut.push_back('0');
+		strOut.push_back('b');
+		break;
+
+		// DEC
+	case 10:
+		break;
+
+		// HEX
+	case 16:
+		strOut.push_back('0');
+		strOut.push_back('x');
+		break;
+
+		// Invalid base
+	default:
+		return std::string();
+	}
+
+	// Separate digits
+	do
+	{
+		digits.push_back(remainder % base);
+		remainder /= base;
+	} while (remainder > 0);
+
+	// Write digits into the output string as characters
+	while (digits.size() > 0)
+	{
+		char cDigit = digits.back();
+
+		if (cDigit >= 0 && cDigit <= 9)
+			cDigit += '0';
+		else if (cDigit >= 10 && cDigit <= 15)
+			cDigit += 'A' - 10;
+
+		strOut.push_back(cDigit);
+		digits.pop_back();
+	}
+
+	return strOut;
+}
+
 // Prints a message representing the recently occurred exception
 void errMessage(const std::string &msg)
 {

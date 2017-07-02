@@ -1,4 +1,4 @@
-#include "h/Processor.hpp"
+#include "../h/Processor.hpp"
 
 bool Processor::instrDEC(const std::string &strDest)
 {
