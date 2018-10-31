@@ -14,9 +14,7 @@ bool Processor::instrXOR(const std::string &strDest, const std::string &strSourc
 				signed int *pRegSource = nullptr;
 				if (getRegInt(strSource, pRegSource))
 				{
-					signed int oldValue = *pRegDest;
 					*pRegDest ^= *pRegSource;
-
 					return true;
 				}
 
@@ -29,9 +27,7 @@ bool Processor::instrXOR(const std::string &strDest, const std::string &strSourc
 				unsigned long *pRegSource = nullptr;
 				if (getRegLong(strSource, pRegSource))
 				{
-					signed int oldValue = *pRegDest;
 					*pRegDest ^= (signed int)*pRegSource;
-
 					return true;
 				}
 
@@ -45,9 +41,7 @@ bool Processor::instrXOR(const std::string &strDest, const std::string &strSourc
 				signed int sourceValue = 0;
 				if (iss >> sourceValue)
 				{
-					signed int oldValue = *pRegDest;
 					*pRegDest ^= sourceValue;
-
 					return true;
 				}
 			}
@@ -68,9 +62,7 @@ bool Processor::instrXOR(const std::string &strDest, const std::string &strSourc
 				signed int *pRegSource = nullptr;
 				if (getRegInt(strSource, pRegSource))
 				{
-					unsigned long oldValue = *pRegDest;
 					*pRegDest ^= (unsigned long)*pRegSource;
-
 					return true;
 				}
 
@@ -83,9 +75,7 @@ bool Processor::instrXOR(const std::string &strDest, const std::string &strSourc
 				unsigned long *pRegSource = nullptr;
 				if (getRegLong(strSource, pRegSource))
 				{
-					unsigned long oldValue = *pRegDest;
 					*pRegDest ^= *pRegSource;
-
 					return true;
 				}
 
@@ -99,9 +89,7 @@ bool Processor::instrXOR(const std::string &strDest, const std::string &strSourc
 				unsigned long sourceValue = 0;
 				if (iss >> sourceValue)
 				{
-					unsigned long oldValue = *pRegDest;
 					*pRegDest ^= sourceValue;
-
 					return true;
 				}
 			}
