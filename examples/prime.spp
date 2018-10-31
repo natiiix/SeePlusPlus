@@ -1,0 +1,42 @@
+// Maximum value to test
+MOV L0 1000
+// Iterator value (set to the initial / minumum value to test)
+MOV L1 2
+// Prime number counter
+MOV L4 0
+
+// Outer loop
+outer:
+CMP L0 L1
+JG end
+MOV L2 2
+
+// Inner prime-testing loop
+inner:
+CMP L1 L2
+JGE is_prime
+
+// Division test
+MOV L3 L1
+MOD L3 L2
+CMP L3 0
+JZ continue_outer
+
+INC L2
+JMP inner
+
+// Iterator is a prime number
+is_prime:
+DUMP L1
+INC L4
+JMP continue_outer
+
+// Increment iterator and continue the outer loop
+continue_outer:
+INC L1
+JMP outer
+
+// End of the program
+// Prints the total number of prime numbers found
+end:
+DUMP L4
